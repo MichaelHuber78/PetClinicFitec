@@ -21,8 +21,8 @@ jobs:
     - uses: Azure/aks-set-context@v1
       with:
         creds: '${{ secrets.AZURE_CREDENTIALS }}'
-        cluster-name: petcliniccr
-        resource-group: rgname
+        cluster-name: akcpetclinic
+        resource-group: kubcluster
         
     - uses: Azure/k8s-create-secret@v1
       with:
