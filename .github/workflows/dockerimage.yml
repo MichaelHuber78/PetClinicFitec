@@ -1,0 +1,22 @@
+name: Docker Image CI
+
+on:
+  push  
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build the Docker image
+      run:
+        - docker build -t petclinic-app .
+        - docker login myacrfitec.azurecr.io -u $ACR_USER -p $ACR_PASSWORD
+        - docker tag petclinic-app myacrfitec.azurecr.io/petclinic-app:latest
+        - docker push myacrfitec.azurecr.io/petclinic-app:latest 
