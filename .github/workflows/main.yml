@@ -21,7 +21,7 @@ jobs:
       with:
         java-version: 1.8
 
-    # Caching the Maven dependencies to speed up the workflow exection time
+    # Caching the Maven dependencies to speed up the workflow execution time
     - name: Cache Maven dependencies
       uses: actions/cache@v1
       with:
@@ -43,9 +43,9 @@ jobs:
     - name: Connect to ACR
       uses: azure/docker-login@v1
       with:
-        login-server: ${{ env.ACR_REPOSITORY }}
-        username: ${{ secrets.ACR_USER }}
-        password: ${{ secrets.ACR_PASSWORD }}
+        login-server: petcliniccr.azurecr.io
+        username: ${{ secrets.REGISTRY_USERNAME }}
+        password: ${{ secrets.REGISTRY_PASSWORD }}
 
     # Build + Push docker image to ACR
     - run: |
