@@ -29,7 +29,7 @@ jobs:
         container-registry-url: petcliniccr.azurecr.io
         container-registry-username: ${{ secrets.REGISTRY_USERNAME }}
         container-registry-password: ${{ secrets.REGISTRY_PASSWORD }}
-        secret-name: azure-storage
+        secret-name: petcliniccr.azurecr.io-secret
 
     - uses: Azure/k8s-deploy@v1
       with:
@@ -38,4 +38,4 @@ jobs:
         images: |
           petcliniccr.azurecr.io/petclinicfitec_petclinic-app:latest
         imagepullsecrets: |
-          azure-storage
+          petcliniccr.azurecr.io-secret
