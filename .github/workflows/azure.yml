@@ -14,8 +14,8 @@ jobs:
         password: ${{ secrets.REGISTRY_PASSWORD }}
     
     - run: |
-        docker build . -t petcliniccr.azurecr.io/k8sdemo:${{ github.sha }}
-        docker push petcliniccr.azurecr.io/k8sdemo:${{ github.sha }}
+        docker build . -t petcliniccr.azurecr.io/petclinicfitec_petclinic-app:latest
+        docker push petcliniccr.azurecr.io/petclinicfitec_petclinic-app:latest
       
     # Set the target AKS cluster.
     - uses: Azure/aks-set-context@v1
@@ -37,6 +37,6 @@ jobs:
           manifests/deployment.yml
           manifests/service.yml
         images: |
-          demo.azurecr.io/k8sdemo:${{ github.sha }}
+          petcliniccr.azurecr.io/petclinicfitec_petclinic-app:latest
         imagepullsecrets: |
           demo-k8s-secret
