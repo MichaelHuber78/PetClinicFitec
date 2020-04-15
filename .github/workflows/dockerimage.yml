@@ -1,7 +1,8 @@
+---
 name: Docker Image CI
 
 on:
-  push  
+  push:
     branches: [ master ]
   pull_request:
     branches: [ master ]
@@ -19,4 +20,4 @@ jobs:
         - docker build -t petclinic-app .
         - docker login myacrfitec.azurecr.io -u $ACR_USER -p $ACR_PASSWORD
         - docker tag petclinic-app myacrfitec.azurecr.io/petclinic-app:latest
-        - docker push myacrfitec.azurecr.io/petclinic-app:latest 
+        - docker push myacrfitec.azurecr.io/petclinic-app:latest
