@@ -1,0 +1,42 @@
+n: "3.4"
+
+services:
+  petclinic:
+    image: ivan/petclinic
+    build: 
+      context: ./tomcat_petclinic
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+    depends_on:
+      - "db"
+    command: ["./wait-for-it.sh", "db:3306", "--timeout=30" ,"--", "catalina.sh", "run"]
+
+  db:
+    image: mysql:5.7
+    container_name: mydb
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: petclinic
+      MYSQL_USER: petclinic
+      MYSQL_PASSWORD: petclinic
+      #ports:
+      #- 3306:3306version: '3'
+services:
+  db-mysql:
+    image: mysql:5.7
+    environment:
+      MYSQL_DATABASE: petclinic
+      MYSQL_USER: petclinic
+      MYSQL_PASSWORD: petclinic
+    ports:
+      - "3308:3306"
+
+  petclinic-app:
+    restart: on-failure
+    build: ./
+    ports:
+      - 8080:8080
+    depends_on:
+      - db-mysql
+
