@@ -1,41 +1,80 @@
 ---
-on: [push]
+# This workflow will build a Java project with Maven
+# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-maven
+
+name: Java CI with Maven
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@master
-     
-    - uses: Azure/docker-login@v1
+    - uses: actions/checkout@v2
+    - name: Set up JDK 1.8
+      uses: actions/setup-java@v1
       with:
-        login-server: petcliniccr.azurecr.io
-        username: ${{ secrets.REGISTRY_USERNAME }}
-        password: ${{ secrets.REGISTRY_PASSWORD }}
-    
+        java-version: 1.8
+
+    # Caching the Maven dependencies to speed up the workflow exection time
+    - name: Cache Maven dependencies
+      uses: actions/cache@v1
+      with:
+        path: ~/.m2
+        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-m2 
+
+    # Test
+    - name: Test with Maven
+      run: mvn test -B --file pom.xml 
+
+    # Build
+    - name: Build with Maven
+      #run: mvn package -B -DskipTests --file pom.xml 
+
+      run: mvn package -P MySQL -B -DskipTests --file pom.xml 
+
+    # Connect to ACR
+    - name: Connect to ACR
+      uses: azure/docker-login@v1
+      with:
+        login-server: ${{ env.ACR_REPOSITORY }}
+        username: ${{ secrets.ACR_USER }}
+        password: ${{ secrets.ACR_PASSWORD }}
+
+    # Build + Push docker image to ACR
     - run: |
         docker build . -t petcliniccr.azurecr.io/petclinicfitec_petclinic-app:latest
         docker push petcliniccr.azurecr.io/petclinicfitec_petclinic-app:latest
-      
-    # Set the target AKS cluster.
-    - uses: Azure/aks-set-context@v1
+
+    # Select AKS cluster
+    - uses: azure/aks-set-context@v1
       with:
         creds: '${{ secrets.AZURE_CREDENTIALS }}'
         cluster-name: akcpetclinic
         resource-group: kubcluster
-        
+
+    # Imagepullsecret for ACR
     - uses: Azure/k8s-create-secret@v1
       with:
         container-registry-url: petcliniccr.azurecr.io
         container-registry-username: ${{ secrets.REGISTRY_USERNAME }}
         container-registry-password: ${{ secrets.REGISTRY_PASSWORD }}
         secret-name: petcliniccr.azurecr.io-secret
+      id: create-secret
 
+    # Deploy to AKS
     - uses: Azure/k8s-deploy@v1
       with:
         manifests: |
           petclinic-kub.yml
         images: |
-          petcliniccr.azurecr.io/petclinicfitec_petclinic-app:latest
+           petcliniccr.azurecr.io/petclinicfitec_petclinic-app:latest
         imagepullsecrets: |
-          petcliniccr.azurecr.io-secret
+          secret-name: petcliniccr.azurecr.io-secret
+          
