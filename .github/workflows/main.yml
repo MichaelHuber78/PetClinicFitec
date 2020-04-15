@@ -35,8 +35,6 @@ jobs:
 
     # Build
     - name: Build with Maven
-      #run: mvn package -B -DskipTests --file pom.xml 
-
       run: mvn package -P MySQL -B -DskipTests --file pom.xml 
 
     # Connect to ACR
