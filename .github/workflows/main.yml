@@ -1,0 +1,85 @@
+---
+# This workflow will build a Java project with Maven
+
+name: Java CI/CD with Maven, Docker, Kubernetes & Azure
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+# Maven
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up JDK 1.8
+      uses: actions/setup-java@v1
+      with:
+        java-version: 1.8
+    - name: Build with Maven
+      run: mvn -B package --file pom.xml
+
+    - name: Cache Maven packages
+      uses: actions/cache@v1
+      with:
+        path: ~/.m2
+        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-m2
+    - name: Build with Maven
+      run:  |
+        mvn -B package --file pom.xml -P MySQL
+        build:
+
+#Docker
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build the Docker image
+      run: docker build -t petclinic-app .
+    
+#   Azure    
+    
+    build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+     
+    - uses: Azure/docker-login@v1
+      with:
+        login-server: petcliniccr.azurecr.io
+        username: ${{ secrets.REGISTRY_USERNAME }}
+        password: ${{ secrets.REGISTRY_PASSWORD }}
+    
+    - run: |
+        docker build . -t petcliniccr.azurecr.io/petclinicfitec_petclinic-app:latest
+        docker push petcliniccr.azurecr.io/petclinicfitec_petclinic-app:latest
+      
+    # Set the target AKS cluster.
+    - uses: Azure/aks-set-context@v1
+      with:
+        creds: '${{ secrets.AZURE_CREDENTIALS }}'
+        cluster-name: akcpetclinic
+        resource-group: kubcluster
+        
+    - uses: Azure/k8s-create-secret@v1
+      with:
+        container-registry-url: petcliniccr.azurecr.io
+        container-registry-username: ${{ secrets.REGISTRY_USERNAME }}
+        container-registry-password: ${{ secrets.REGISTRY_PASSWORD }}
+        secret-name: azure-storage
+
+    - uses: Azure/k8s-deploy@v1
+      with:
+        manifests: |
+          manifests/deployment.yml
+          manifests/service.yml
+        images: |
+          petcliniccr.azurecr.io/petclinicfitec_petclinic-app:latest
+        imagepullsecrets: |
+          azure-storage
