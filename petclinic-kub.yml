@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: maryam-petclinic
+  name: mh-petclinic
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: maryam-petclinic
+      app: mh-petclinic
   template:
     metadata:
       labels:
-        app: maryam-petclinic
+        app: mh-petclinic
     spec:
       containers:
-      - name: maryam-petclinic
+      - name: mh-petclinic
         image: myacrfitec.azurecr.io/petclinic-app:latest
         imagePullPolicy: Always
         resources:
@@ -31,12 +31,12 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app: maryam-petclinic
-  name: maryam-petclinic
+    app: mh-petclinic
+  name: mh-petclinic
 spec:
   type: LoadBalancer
   ports:
   - port: 80
     targetPort: 8080
   selector:
-    app: maryam-petclinic
+    app: mh-petclinic
