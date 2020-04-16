@@ -74,7 +74,7 @@ jobs:
         manifests: |
           petclinic-kub.yml
         images: |
-           petcliniccr.azurecr.io/petclinicfitec_petclinic-app:latest
+           petcliniccr.azurecr.io/petclinic-app:latest
         imagepullsecrets: |
           secret-name: petcliniccr.azurecr.io-secret
           
