@@ -18,7 +18,7 @@ env:
   REGISTRY_NAME: petcliniccr
   CLUSTER_NAME: akcpetclinic
   CLUSTER_RESOURCE_GROUP: kubcluster
-  NAMESPACE: default
+  NAMESPACE: petclinic-app
 
 
 jobs:
