@@ -50,8 +50,8 @@ jobs:
 
     # Build + Push docker image to ACR
     - run: |
-        docker build . -t petcliniccr.azurecr.io/petclinicfitec_petclinic-app:latest
-        docker push petcliniccr.azurecr.io/petclinicfitec_petclinic-app:latest
+        docker build . -t petcliniccr.azurecr.io/petclinic-app:latest
+        docker push petcliniccr.azurecr.io/petclinic-app:latest
 
     # Select AKS cluster
     - uses: azure/aks-set-context@v1
