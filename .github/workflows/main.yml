@@ -15,7 +15,7 @@ on:
 
 
 env:
-  REGISTRY_NAME: petcliniccr
+  REGISTRY_NAME: myacrfitec
   CLUSTER_NAME: akcpetclinic
   CLUSTER_RESOURCE_GROUP: kubcluster
   NAMESPACE: petclinic-app
