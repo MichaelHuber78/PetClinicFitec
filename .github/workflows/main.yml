@@ -73,7 +73,7 @@ jobs:
         container-registry-url: ${{ env.REGISTRY_NAME }}.azurecr.io
         container-registry-username: ${{ secrets.REGISTRY_USERNAME }}
         container-registry-password: ${{ secrets.REGISTRY_PASSWORD }}
-	secret-name: ${{ env.REGISTRY_NAME }}.azurecr.io-secret
+	secret-name: '${{ env.REGISTRY_NAME }}.azurecr.io-secret'
         namespace: ${{ env.NAMESPACE }}
     # Deploy to AKS
     - uses: Azure/k8s-deploy@v1
