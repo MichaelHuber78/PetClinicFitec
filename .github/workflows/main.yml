@@ -18,7 +18,7 @@ env:
   REGISTRY_NAME: petcliniccr
   CLUSTER_NAME: akcpetclinic
   CLUSTER_RESOURCE_GROUP: kubcluster
-  NAMESPACE: default
+  NAMESPACE: petclinic-app
 
 
 jobs:
@@ -67,6 +67,9 @@ jobs:
         cluster-name: ${{ env.CLUSTER_NAME }}
         resource-group: ${{ env.CLUSTER_RESOURCE_GROUP }}
 
+      # Create namespace if doesn't exist
+    - run: |
+        kubectl create namespace ${{ env.NAMESPACE }} --dry-run -o json | kubectl apply -f -
     # Imagepullsecret for ACR
     - uses: Azure/k8s-create-secret@v1
       with:
