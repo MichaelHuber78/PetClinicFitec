@@ -60,10 +60,6 @@ jobs:
         cluster-name: akcpetclinic
         resource-group: kubcluster
 
-        # Create namespace if doesn't exist
-    - run: |
-        kubectl create namespace ${{ env.NAMESPACE }} --dry-run -o json | kubectl apply -f -
-
     # Imagepullsecret for ACR
     - uses: Azure/k8s-create-secret@v1
       with:
