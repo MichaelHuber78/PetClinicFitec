@@ -76,5 +76,5 @@ jobs:
         images: |
            petcliniccr.azurecr.io/petclinic-app:latest
         imagepullsecrets: |
-          secret-name: petcliniccr.azurecr.io-secret
+           petcliniccr.azurecr.io-secret
           
