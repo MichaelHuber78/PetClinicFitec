@@ -2,7 +2,7 @@
 # This workflow will build a Java project with Maven
 # For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-maven
 
-# on push for test but on merge in reality .
+# on push for test but on merge in reality
 
 name: Java CI with Maven
 
@@ -13,7 +13,7 @@ on:
   pull_request:
     branches: [ master ]
 
-
+# Environment variables available to all jobs and steps in this workflow
 env:
   REGISTRY_NAME: myacrfitec
   CLUSTER_NAME: akcpetclinic
@@ -51,14 +51,14 @@ jobs:
     - name: Connect to ACR
       uses: azure/docker-login@v1
       with:
-        login-server: ${{env.REGISTRY_NAME}}.azurecr.io
+        login-server: ${{ env.REGISTRY_NAME }}.azurecr.io
         username: ${{ secrets.REGISTRY_USERNAME }}
         password: ${{ secrets.REGISTRY_PASSWORD }}
 
     # Build + Push docker image to ACR
     - run: |
-        docker build . -t ${{env.REGISTRY_NAME}}.azurecr.io/petclinic-app:latest
-        docker push ${{env.REGISTRY_NAME}}.azurecr.io/petclinic-app:latest
+        docker build . -t ${{ env.REGISTRY_NAME }}.azurecr.io/petclinic-app:latest
+        docker push ${{ env.REGISTRY_NAME }}.azurecr.io/petclinic-app:latest
 
     # Select AKS cluster
     - uses: azure/aks-set-context@v1
@@ -67,17 +67,19 @@ jobs:
         cluster-name: ${{ env.CLUSTER_NAME }}
         resource-group: ${{ env.CLUSTER_RESOURCE_GROUP }}
 
-      # Create namespace if doesn't exist
+    # Create namespace if doesn't exist
     - run: |
         kubectl create namespace ${{ env.NAMESPACE }} --dry-run -o json | kubectl apply -f -
+
     # Imagepullsecret for ACR
     - uses: Azure/k8s-create-secret@v1
       with:
         container-registry-url: ${{ env.REGISTRY_NAME }}.azurecr.io
         container-registry-username: ${{ secrets.REGISTRY_USERNAME }}
         container-registry-password: ${{ secrets.REGISTRY_PASSWORD }}
-        secret-name: ${{ env.REGISTRY_NAME }}.azurecr.io-secret
+        secret-name: ${{ env.REGISTRY_NAME }}-registry-connection
         namespace: ${{ env.NAMESPACE }}
+
     # Deploy to AKS
     - uses: Azure/k8s-deploy@v1
       with:
@@ -86,5 +88,6 @@ jobs:
         images: |
            ${{ env.REGISTRY_NAME }}.azurecr.io/petclinic-app:latest
         imagepullsecrets: |
-           ${{ env.REGISTRY_NAME }}.azurecr.io-secret
+           ${{ env.REGISTRY_NAME }}-registry-connection
         namespace: ${{ env.NAMESPACE }}
+          
