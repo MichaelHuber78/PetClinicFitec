@@ -66,7 +66,6 @@ jobs:
         container-registry-url: petcliniccr.azurecr.io
         container-registry-username: ${{ secrets.REGISTRY_USERNAME }}
         container-registry-password: ${{ secrets.REGISTRY_PASSWORD }}
-        secret-name: petcliniccr.azurecr.io-secret
 
     # Deploy to AKS
     - uses: Azure/k8s-deploy@v1
@@ -75,6 +74,4 @@ jobs:
           petclinic-kub.yml
         images: |
            petcliniccr.azurecr.io/petclinic-app:latest
-        imagepullsecrets: |
-          secret-name: petcliniccr.azurecr.io-secret
           
